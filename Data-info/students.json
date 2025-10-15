@@ -1,0 +1,193 @@
+[
+  {
+    "id": 1,
+    "name": "obed afatsaw",
+    "email": "obedafatsaw@gmail.com",
+    "selectedCourses": [
+      {
+        "id": "CS401",
+        "name": "Machine Learning Fundamentals",
+        "credits": 4,
+        "cost": 420
+      },
+      {
+        "id": "CS101",
+        "name": "Introduction to Programming",
+        "credits": 3,
+        "cost": 300
+      },
+      {
+        "id": "CS201",
+        "name": "Web Development Fundamentals",
+        "credits": 3,
+        "cost": 320
+      }
+    ]
+  },
+  {
+    "id": 2,
+    "name": "obed afatsaw",
+    "email": "obedafatsaw@gmail.com",
+    "selectedCourses": [
+      {
+        "id": "CS101",
+        "name": "Introduction to Programming",
+        "credits": 3,
+        "cost": 300
+      },
+      {
+        "id": "CS102",
+        "name": "Data Structures and Algorithms",
+        "credits": 4,
+        "cost": 350
+      }
+    ]
+  },
+  {
+    "id": 3,
+    "name": "obed afatsaw",
+    "email": "obedafatsaw@gmail.com",
+    "selectedCourses": [
+      {
+        "id": "CS301",
+        "name": "Database Systems",
+        "credits": 4,
+        "cost": 380
+      },
+      {
+        "id": "CS401",
+        "name": "Machine Learning Fundamentals",
+        "credits": 4,
+        "cost": 420
+      }
+    ]
+  },
+  {
+    "id": 4,
+    "name": "obed afatsaw",
+    "email": "obedafatsaw@gmail.com",
+    "selectedCourses": [
+      {
+        "id": "CS101",
+        "name": "Introduction to Programming",
+        "credits": 3,
+        "cost": 300
+      }
+    ]
+  },
+  {
+    "id": 5,
+    "name": "obed afatsaw",
+    "email": "obedafatsaw@gmail.com",
+    "selectedCourses": [
+      {
+        "id": "CS101",
+        "name": "Introduction to Programming",
+        "credits": 3,
+        "cost": 300
+      },
+      {
+        "id": "CS102",
+        "name": "Data Structures and Algorithms",
+        "credits": 4,
+        "cost": 350
+      }
+    ]
+  },
+  {
+    "id": 6,
+    "name": "obed afatsaw",
+    "email": "obedafatsaw@gmail.com",
+    "selectedCourses": [
+      {
+        "id": "CS401",
+        "name": "Machine Learning Fundamentals",
+        "credits": 4,
+        "cost": 420
+      }
+    ]
+  },
+  {
+    "id": 7,
+    "name": "obed afatsaw",
+    "email": "obedafatsaw@gmail.com",
+    "selectedCourses": [
+      {
+        "id": "CS101",
+        "name": "Introduction to Programming",
+        "credits": 3,
+        "cost": 300
+      }
+    ]
+  },
+  {
+    "id": 8,
+    "name": "obed afatsaw",
+    "email": "obedafatsaw@gmail.com",
+    "selectedCourses": [
+      {
+        "id": "PHYS101",
+        "name": "Physics I - Mechanics",
+        "credits": 4,
+        "cost": 340
+      }
+    ]
+  },
+  {
+    "id": 9,
+    "name": "obed afatsaw",
+    "email": "obedafatsaw@gmail.com",
+    "selectedCourses": [
+      {
+        "id": "CS101",
+        "name": "Introduction to Programming",
+        "credits": 3,
+        "cost": 300
+      },
+      {
+        "id": "CS102",
+        "name": "Data Structures and Algorithms",
+        "credits": 4,
+        "cost": 350
+      }
+    ]
+  },
+  {
+    "id": 10,
+    "name": "obed afatsaw",
+    "email": "obedafatsaw@gmail.com",
+    "selectedCourses": [
+      {
+        "id": "CS101",
+        "name": "Introduction to Programming",
+        "credits": 3,
+        "cost": 300
+      },
+      {
+        "id": "CS102",
+        "name": "Data Structures and Algorithms",
+        "credits": 4,
+        "cost": 350
+      }
+    ]
+  },
+  {
+    "id": 11,
+    "name": "grace adu",
+    "email": "graceadu@gmail.com",
+    "selectedCourses": [
+      {
+        "id": "PHYS101",
+        "name": "Physics I - Mechanics",
+        "credits": 4,
+        "cost": 340
+      },
+      {
+        "id": "PHYS102",
+        "name": "Physics II - Electricity & Magnetism",
+        "credits": 4,
+        "cost": 340
+      }
+    ]
+  }
+]
