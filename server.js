@@ -14,10 +14,20 @@ const studentsFilePath = path.join(__dirname, "Data-info", "students.json");
 
 // Middleware
 //*app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+const allowedOrigins = [
+  "http://localhost:3000",
+  "https://edututor-pro.netlify.app",
+];
+
 app.use(
   cors({
-    origin: ["http://localhost:3000", "https://edututor-pro.netlify.app"],
-    methods: ["GET", "POST", "PUT", "DELETE"],
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.includes(origin)) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
     credentials: true,
   })
 );
@@ -221,6 +231,12 @@ app.delete("/api/students/:id", (req, res) => {
 /* ========= START SERVER ========= */
 app.listen(PORT, () => {
   console.log(`🚀 EduTutor Pro Backend running on port ${PORT}`);
-  console.log(`📚 API endpoints available at http://localhost:${PORT}/api`);
-  console.log(`🔍 Health check: http://localhost:${PORT}/api/health`);
+
+  if (process.env.RENDER === "true") {
+    console.log(
+      `📚 API endpoints available at /api (Render environment detected)`
+    );
+  } else {
+    console.log(`📚 API endpoints available at http://localhost:${PORT}/api`);
+  }
 });
