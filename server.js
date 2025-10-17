@@ -229,8 +229,11 @@ app.delete("/api/students/:id", (req, res) => {
 });
 
 /* ========= START SERVER ========= */
-app.listen(PORT, () => {
-  console.log(`🚀 EduTutor Pro Backend running on port ${PORT}`);
+const { server } = require("./config");
+app.listen(server.port, server.host, () => {
+  console.log(
+    `🚀 EduTutor Pro Backend running at http://${server.host}:${server.port}`
+  );
 
   if (process.env.RENDER === "true") {
     console.log(
