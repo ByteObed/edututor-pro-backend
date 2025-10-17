@@ -13,7 +13,15 @@ const PORT = process.env.PORT || 5000;
 const studentsFilePath = path.join(__dirname, "Data-info", "students.json");
 
 // Middleware
-app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+//*app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+app.use(
+  cors({
+    origin: ["http://localhost:3000", "https://edututor-pro.netlify.app"],
+    methods: ["GET", "POST", "PUT", "DELETE"],
+    credentials: true,
+  })
+);
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
