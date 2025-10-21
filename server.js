@@ -3,7 +3,6 @@ const express = require("express");
 const cors = require("cors");
 const fs = require("fs");
 const path = require("path");
-
 const { majors, coursesData } = require("./Data-info/courses-data");
 
 const app = express();
@@ -12,8 +11,7 @@ const PORT = process.env.PORT || 5000;
 // Path to students.json
 const studentsFilePath = path.join(__dirname, "Data-info", "students.json");
 
-// Middleware
-//*app.use(cors({ origin: "http://localhost:3000", credentials: true }));
+/* ========= MIDDLEWARE ========= */
 const allowedOrigins = [
   "http://localhost:3000",
   "https://edututor-pro.netlify.app",
@@ -51,31 +49,28 @@ function writeStudents(students) {
 
 /* ========= API ROUTES ========= */
 
-// Health check
+// ✅ Health check
 app.get("/api/health", (req, res) => {
   res.json({ status: "OK", message: "EduTutor Pro API is running 🚀" });
 });
 
-// Get majors
+// ✅ Get majors
 app.get("/api/majors", (req, res) => {
   res.json(majors);
 });
 
-// Get all courses (flattened)
+// ✅ Get all courses (flattened)
 app.get("/api/courses", (req, res) => {
   const allCourses = [];
   Object.keys(coursesData).forEach((major) => {
     coursesData[major].forEach((course) => {
-      allCourses.push({
-        ...course,
-        major,
-      });
+      allCourses.push({ ...course, major });
     });
   });
   res.json(allCourses);
 });
 
-// Get courses by major
+// ✅ Get courses by major
 app.get("/api/courses/:majorName", (req, res) => {
   const { majorName } = req.params;
   const courses = coursesData[majorName];
@@ -85,45 +80,66 @@ app.get("/api/courses/:majorName", (req, res) => {
   res.json(courses);
 });
 
-// Register new student OR add courses to existing student
-app.post("/api/students/complete-registration", (req, res) => {
-  const { name, email, selectedCourses } = req.body;
+/* ========= STUDENT ENDPOINTS ========= */
 
-  if (!name || !email || !selectedCourses?.length) {
-    return res.status(400).json({ message: "All fields are required!" });
+// 🔹 Register a new student (only creates once)
+app.post("/api/students/register", (req, res) => {
+  const { name, email } = req.body;
+
+  if (!name || !email) {
+    return res.status(400).json({ message: "Name and email are required!" });
   }
 
   let students = readStudents();
 
-  // ✅ Check if student already exists by email
-  const existingStudent = students.find((s) => s.email === email);
+  const existingStudent = students.find(
+    (s) => s.email.toLowerCase() === email.toLowerCase()
+  );
 
   if (existingStudent) {
-    // ✅ Student exists - ADD new courses to existing courses (no duplicates)
-    selectedCourses.forEach((newCourse) => {
-      const alreadyExists = existingStudent.selectedCourses.some(
-        (c) => c.id === newCourse.id
-      );
-      if (!alreadyExists) {
-        existingStudent.selectedCourses.push(newCourse);
-      }
-    });
-
-    writeStudents(students);
-
     return res.status(200).json({
-      message: "Courses added successfully ✅",
+      message: "Student already registered ✅",
       student: existingStudent,
     });
-  } else {
-    // ✅ New student - create new record
+  }
+
+  const newStudent = {
+    id: students.length + 1,
+    name,
+    email,
+    selectedCourses: [],
+  };
+
+  students.push(newStudent);
+  writeStudents(students);
+
+  return res.status(201).json({
+    message: "Student registered successfully ✅",
+    student: newStudent,
+  });
+});
+
+// 🔹 Complete registration (add or merge courses)
+app.post("/api/students/complete-registration", (req, res) => {
+  const { name, email, selectedCourses } = req.body;
+
+  if (!email || !selectedCourses || !Array.isArray(selectedCourses)) {
+    return res.status(400).json({ message: "Invalid registration data!" });
+  }
+
+  let students = readStudents();
+  const studentIndex = students.findIndex(
+    (s) => s.email.toLowerCase() === email.toLowerCase()
+  );
+
+  if (studentIndex === -1) {
+    // New student
     const newStudent = {
       id: students.length + 1,
-      name,
+      name: name || "Unknown",
       email,
       selectedCourses,
     };
-
     students.push(newStudent);
     writeStudents(students);
 
@@ -132,13 +148,29 @@ app.post("/api/students/complete-registration", (req, res) => {
       student: newStudent,
     });
   }
+
+  // Existing student — merge new courses (no duplicates)
+  const existingCourses = students[studentIndex].selectedCourses || [];
+  const newCourses = selectedCourses.filter(
+    (c) => !existingCourses.some((ec) => ec.id === c.id)
+  );
+
+  students[studentIndex].selectedCourses = [...existingCourses, ...newCourses];
+  writeStudents(students);
+
+  return res.status(200).json({
+    message: "Registration updated successfully ✅",
+    student: students[studentIndex],
+  });
 });
 
-// 🔹 Get student by email (important for login / reload persistence)
+// 🔹 Get student by email
 app.get("/api/students/email/:email", (req, res) => {
   const { email } = req.params;
   const students = readStudents();
-  const student = students.find((s) => s.email === email);
+  const student = students.find(
+    (s) => s.email.toLowerCase() === email.toLowerCase()
+  );
 
   if (!student) {
     return res.status(404).json({ message: "Student not found ❌" });
@@ -147,7 +179,7 @@ app.get("/api/students/email/:email", (req, res) => {
   res.json(student);
 });
 
-// 🔹 Register/add a single course to an existing student
+// 🔹 Register/add a single course manually
 app.post("/api/students/register-course", (req, res) => {
   const { email, course } = req.body;
 
@@ -156,10 +188,11 @@ app.post("/api/students/register-course", (req, res) => {
   }
 
   let students = readStudents();
-  let student = students.find((s) => s.email === email);
+  let student = students.find(
+    (s) => s.email.toLowerCase() === email.toLowerCase()
+  );
 
   if (!student) {
-    // create a new student record if not found
     student = {
       id: students.length + 1,
       name: "Unknown",
@@ -169,7 +202,6 @@ app.post("/api/students/register-course", (req, res) => {
     students.push(student);
   }
 
-  // Prevent duplicate course registration
   const alreadyExists = student.selectedCourses.some((c) => c.id === course.id);
   if (!alreadyExists) {
     student.selectedCourses.push(course);
@@ -182,13 +214,13 @@ app.post("/api/students/register-course", (req, res) => {
   });
 });
 
-// Get all students
+// 🔹 Get all students
 app.get("/api/students", (req, res) => {
   const students = readStudents();
   res.json(students);
 });
 
-// Update student’s courses
+// 🔹 Update student’s courses
 app.put("/api/students/:id/update-courses", (req, res) => {
   const { id } = req.params;
   const { selectedCourses } = req.body;
@@ -209,7 +241,7 @@ app.put("/api/students/:id/update-courses", (req, res) => {
   });
 });
 
-// Delete student
+// 🔹 Delete student
 app.delete("/api/students/:id", (req, res) => {
   const { id } = req.params;
   let students = readStudents();
@@ -229,16 +261,7 @@ app.delete("/api/students/:id", (req, res) => {
 });
 
 /* ========= START SERVER ========= */
-const { server } = require("./config");
-
 app.listen(PORT, "0.0.0.0", () => {
   console.log(`🚀 EduTutor Pro Backend running at http://0.0.0.0:${PORT}`);
-
-  if (process.env.RENDER === "true") {
-    console.log(
-      `📚 API endpoints available at /api (Render environment detected)`
-    );
-  } else {
-    console.log(`📚 API endpoints available at http://localhost:${PORT}/api`);
-  }
+  console.log(`📚 API endpoints available at http://localhost:${PORT}/api`);
 });
